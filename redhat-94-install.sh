@@ -11,7 +11,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 INSTALL_DIR="/opt/netswift"
-BASE_URL="https://raw.githubusercontent.com/melsayeh/netswift-installer/refs/heads/main/redhat-94-install.sh"
+BASE_URL="https://raw.githubusercontent.com/melsayeh/netswift-installer/refs/heads/main"
 LOG_FILE="/tmp/netswift-install.log"
 
 log() {
