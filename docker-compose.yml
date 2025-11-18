@@ -1,0 +1,49 @@
+cat > docker-compose.yml << 'EOF'
+version: '3.8'
+
+services:
+  backend:
+    image: melsayeh/netswift-backend:2.0.0
+    container_name: netswift-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  appsmith:
+    image: appsmith/appsmith-ce:latest
+    container_name: netswift-appsmith
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - appsmith_data:/appsmith-stacks
+      - ./netswift.json:/tmp/netswift.json:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    restart: unless-stopped
+    environment:
+      - APPSMITH_DISABLE_TELEMETRY=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  appsmith_data:
+    driver: local
+EOF
